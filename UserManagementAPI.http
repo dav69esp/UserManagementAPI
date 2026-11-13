@@ -1,0 +1,200 @@
+@baseUrl = http://localhost:5241
+@validToken = Bearer TechHiveSecureToken123
+@invalidToken = Bearer InvalidToken
+
+#################################################
+# HEALTH CHECK - GET ALL USERS (AUTHORIZED)
+#################################################
+
+GET {{baseUrl}}/api/users
+Authorization: {{validToken}}
+
+###
+
+#################################################
+# GET USER BY ID (EXISTS)
+#################################################
+
+GET {{baseUrl}}/api/users/1
+Authorization: {{validToken}}
+
+###
+
+#################################################
+# GET USER BY ID (NOT FOUND)
+#################################################
+
+GET {{baseUrl}}/api/users/999
+Authorization: {{validToken}}
+
+###
+
+#################################################
+# CREATE USER (VALID)
+#################################################
+
+POST {{baseUrl}}/api/users
+Authorization: {{validToken}}
+Content-Type: application/json
+
+{
+  "firstName": "David",
+  "lastName": "Jones",
+  "email": "david.jones@techhive.com",
+  "department": "IT"
+}
+
+###
+
+#################################################
+# CREATE USER (INVALID EMAIL)
+#################################################
+
+POST {{baseUrl}}/api/users
+Authorization: {{validToken}}
+Content-Type: application/json
+
+{
+  "firstName": "David",
+  "lastName": "Jones",
+  "email": "not-an-email",
+  "department": "IT"
+}
+
+###
+
+#################################################
+# CREATE USER (MISSING REQUIRED FIELDS)
+#################################################
+
+POST {{baseUrl}}/api/users
+Authorization: {{validToken}}
+Content-Type: application/json
+
+{
+  "firstName": "",
+  "lastName": "",
+  "email": "",
+  "department": ""
+}
+
+###
+
+#################################################
+# CREATE DUPLICATE USER
+# Run the VALID CREATE first, then run this
+#################################################
+
+POST {{baseUrl}}/api/users
+Authorization: {{validToken}}
+Content-Type: application/json
+
+{
+  "firstName": "David",
+  "lastName": "Jones",
+  "email": "david.jones@techhive.com",
+  "department": "IT"
+}
+
+###
+
+#################################################
+# UPDATE USER (EXISTS)
+#################################################
+
+PUT {{baseUrl}}/api/users/1
+Authorization: {{validToken}}
+Content-Type: application/json
+
+{
+  "id": 1,
+  "firstName": "John",
+  "lastName": "Smith",
+  "email": "john.updated@techhive.com",
+  "department": "Information Technology"
+}
+
+###
+
+#################################################
+# UPDATE USER (NOT FOUND)
+#################################################
+
+PUT {{baseUrl}}/api/users/999
+Authorization: {{validToken}}
+Content-Type: application/json
+
+{
+  "id": 999,
+  "firstName": "Ghost",
+  "lastName": "User",
+  "email": "ghost@techhive.com",
+  "department": "Unknown"
+}
+
+###
+
+#################################################
+# DELETE USER (EXISTS)
+# Change ID as needed
+#################################################
+
+DELETE {{baseUrl}}/api/users/2
+Authorization: {{validToken}}
+
+###
+
+#################################################
+# DELETE USER (NOT FOUND)
+#################################################
+
+DELETE {{baseUrl}}/api/users/999
+Authorization: {{validToken}}
+
+###
+
+#################################################
+# AUTH TEST - NO TOKEN
+# Should return 401
+#################################################
+
+GET {{baseUrl}}/api/users
+
+###
+
+#################################################
+# AUTH TEST - INVALID TOKEN
+# Should return 401
+#################################################
+
+GET {{baseUrl}}/api/users
+Authorization: {{invalidToken}}
+
+###
+
+#################################################
+# AUTH TEST - VALID TOKEN
+# Should return 200
+#################################################
+
+GET {{baseUrl}}/api/users
+Authorization: {{validToken}}
+
+###
+
+#################################################
+# ERROR HANDLING TEST
+# Requires the temporary endpoint:
+#
+# [HttpGet("test-error")]
+# public IActionResult TestError()
+# {
+#     throw new Exception("Test Exception");
+# }
+#
+#################################################
+
+GET {{baseUrl}}/api/users/test-error
+Authorization: {{validToken}}
+
+###
